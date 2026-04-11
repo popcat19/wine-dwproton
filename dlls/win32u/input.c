@@ -3122,6 +3122,9 @@ static struct pointer *find_pointer( UINT32 id )
     LIST_FOR_EACH_ENTRY( pointer, get_known_pointers( thread_info ), struct pointer, entry )
         if (pointer->id == id) return pointer;
 
+    /* allocate a pointer for the mouse if we don't have one yet */
+    if (id == 1) return pointer_create( id );
+
     WARN( "failed to find pointer with id %d\n", id );
     return NULL;
 }

@@ -110,6 +110,7 @@ extern USHORT map_scan_to_kbd_vkey( USHORT scan, HKL layout );
 void update_mouse_state_from_pointer( HWND hwnd, UINT msg, unsigned int pointer_id );
 extern BOOL register_touch_window( HWND hwnd, UINT flags );
 extern BOOL unregister_touch_window( HWND hwnd );
+extern BOOL process_pointer_message( MSG *msg, UINT hw_id, const struct hardware_msg_data *msg_data );
 
 /* menu.c */
 extern UINT draw_nc_menu_bar( HDC hdc, RECT *rect, HWND hwnd );

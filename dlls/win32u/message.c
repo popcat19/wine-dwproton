@@ -2487,23 +2487,6 @@ static void send_parent_notify( HWND hwnd, WORD event, WORD idChild, POINT pt )
 }
 
 /***********************************************************************
- *          process_pointer_message
- *
- * returns TRUE if the contents of 'msg' should be passed to the application
- */
-static BOOL process_pointer_message( MSG *msg, UINT hw_id, const struct hardware_msg_data *msg_data )
-{
-    RECT rect;
-
-    SetRect( &rect, LOWORD(msg->lParam), HIWORD(msg->lParam), LOWORD(msg->lParam), HIWORD(msg->lParam) );
-    rect = map_rect_raw_to_virt( rect, get_thread_dpi() );
-    msg->lParam = MAKELPARAM(rect.left, rect.top);
-
-    msg->pt = point_phys_to_win_dpi( msg->hwnd, msg->pt );
-    return TRUE;
-}
-
-/***********************************************************************
  *          process_keyboard_message
  *
  * returns TRUE if the contents of 'msg' should be passed to the application

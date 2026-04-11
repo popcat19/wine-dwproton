@@ -295,7 +295,7 @@ union sysparam_all_entry
     struct sysparam_pref_entry   pref;
 };
 
-static UINT system_dpi;
+UINT system_dpi;
 static RECT work_area;
 static DWORD process_layout = ~0u;
 
@@ -7879,6 +7879,7 @@ static void thread_detach(void)
     struct user_thread_info *thread_info = get_user_thread_info();
 
     destroy_thread_windows();
+    destroy_thread_pointers();
     user_driver->pThreadDetach();
 
     free( thread_info->rawinput );

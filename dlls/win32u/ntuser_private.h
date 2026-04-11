@@ -138,6 +138,7 @@ struct user_thread_info
     DWORD                         clipping_reset;         /* time when clipping was last reset */
     struct session_thread_data   *session_data;           /* shared session thread data */
     struct mouse_tracking_info   *mouse_tracking_info;    /* NtUserTrackMouseEvent handling */
+    struct list                   known_pointers;         /* list of known pointers */
 };
 
 C_ASSERT( sizeof(struct user_thread_info) <= sizeof(((TEB *)0)->Win32ClientInfo) );

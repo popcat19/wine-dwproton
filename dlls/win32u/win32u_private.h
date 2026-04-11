@@ -110,6 +110,7 @@ extern USHORT map_scan_to_kbd_vkey( USHORT scan, HKL layout );
 void update_mouse_state_from_pointer( HWND hwnd, UINT msg, unsigned int pointer_id );
 extern BOOL register_touch_window( HWND hwnd, UINT flags );
 extern BOOL unregister_touch_window( HWND hwnd );
+extern void destroy_thread_pointers(void);
 extern BOOL process_pointer_message( MSG *msg, UINT hw_id, const struct hardware_msg_data *msg_data );
 
 /* menu.c */
@@ -157,6 +158,7 @@ extern void set_standard_scroll_painted( HWND hwnd, int bar, BOOL painted );
 extern void track_scroll_bar( HWND hwnd, int scrollbar, POINT pt );
 
 /* sysparams.c */
+extern UINT system_dpi;
 extern BOOL decorated_mode;
 extern UINT64 thunk_lock_callback;
 extern HBRUSH get_55aa_brush(void);

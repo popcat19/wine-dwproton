@@ -112,6 +112,7 @@ extern BOOL register_touch_window( HWND hwnd, UINT flags );
 extern BOOL unregister_touch_window( HWND hwnd );
 extern void destroy_thread_pointers(void);
 extern BOOL process_pointer_message( MSG *msg, UINT hw_id, const struct hardware_msg_data *msg_data );
+extern void update_pointer_from_msg( POINTER_INPUT_TYPE type, const MSG *msg );
 
 /* menu.c */
 extern UINT draw_nc_menu_bar( HDC hdc, RECT *rect, HWND hwnd );

@@ -413,6 +413,7 @@ struct pointer
 {
     UINT32 id;
     struct list entry;
+    POINTER_INPUT_TYPE type;
     POINTER_INFO info;
 };
 
@@ -3052,15 +3053,16 @@ void destroy_thread_pointers(void)
     }
 }
 
-static struct pointer *pointer_create( UINT32 id )
+static struct pointer *pointer_create( UINT32 id, POINTER_INPUT_TYPE type )
 {
     struct user_thread_info *thread_info = get_user_thread_info();
     struct pointer *pointer;
 
-    TRACE( "allocating pointer id %d\n", id );
+    TRACE( "allocating pointer id %d, type %#x\n", id, type );
 
     if (!(pointer = calloc( 1, sizeof(*pointer) ))) return NULL;
     pointer->id = id;
+    pointer->type = type;
     list_add_tail( get_known_pointers( thread_info ), &pointer->entry );
 
     return pointer;
@@ -3077,7 +3079,7 @@ static struct pointer *find_pointer( UINT32 id )
         if (pointer->id == id) return pointer;
 
     /* allocate a pointer for the mouse if we don't have one yet */
-    if (id == 1) return pointer_create( id );
+    if (id == 1) return pointer_create( id, PT_MOUSE );
 
     WARN( "failed to find pointer with id %d\n", id );
     return NULL;
@@ -3141,6 +3143,18 @@ static POINTER_BUTTON_CHANGE_TYPE compare_button( const POINTER_INFO *old, const
     return change;
 }
 
+static POINTER_INPUT_TYPE pointer_type_from_hw( const struct hw_msg_source *source )
+{
+    switch (source->origin)
+    {
+    case IMDT_PEN: return PT_PEN;
+    case IMDT_MOUSE: return PT_MOUSE;
+    case IMDT_TOUCH: return PT_TOUCH;
+    case IMDT_TOUCHPAD: return PT_TOUCHPAD;
+    default: return PT_POINTER;
+    }
+}
+
 /***********************************************************************
  *          process_pointer_message
  *
@@ -3148,6 +3162,7 @@ static POINTER_BUTTON_CHANGE_TYPE compare_button( const POINTER_INFO *old, const
  */
 BOOL process_pointer_message( MSG *msg, UINT hw_id, const struct hardware_msg_data *msg_data )
 {
+    POINTER_INPUT_TYPE type = pointer_type_from_hw( &msg_data->source );
     UINT id = GET_POINTERID_WPARAM( msg->wParam );
     struct pointer *pointer;
     POINTER_INFO info;
@@ -3158,10 +3173,11 @@ BOOL process_pointer_message( MSG *msg, UINT hw_id, const struct hardware_msg_da
     msg->lParam = MAKELPARAM(rect.left, rect.top);
 
     msg->pt = point_phys_to_win_dpi( msg->hwnd, msg->pt );
-    if (!(pointer = find_pointer( id )) && !(pointer = pointer_create( id ))) return TRUE;
+    if (!(pointer = find_pointer( id )) && !(pointer = pointer_create( id, type ))) return TRUE;
     info = pointer_info_from_msg( msg );
     info.ButtonChangeType = compare_button( &pointer->info, &info );
     pointer->info = info;
+    pointer->info.pointerType = pointer->type;
     return TRUE;
 }
 
